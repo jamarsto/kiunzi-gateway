@@ -1,0 +1,27 @@
+plugins {
+    id 'java-library'
+    id 'io.freefair.lombok'
+}
+
+repositories {
+    mavenCentral()
+}
+
+archivesBaseName = 'domain'
+group = 'uk.me.jasonmarston.app'
+version = 'latest'
+
+dependencies {
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(20)
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

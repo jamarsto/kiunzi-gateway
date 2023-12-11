@@ -1,0 +1,42 @@
+plugins {
+    id 'java-library'
+    id 'io.quarkus'
+}
+
+repositories {
+    mavenCentral()
+}
+
+archivesBaseName = 'movies'
+group = 'uk.me.jasonmarston.app'
+version = 'latest'
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+
+    implementation project(':framework-input')
+    implementation project(':framework-output')
+
+    implementation 'io.quarkus:quarkus-config-yaml'
+    implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
+    implementation 'io.quarkus:quarkus-oidc'
+    implementation 'io.quarkus:quarkus-oidc-client-reactive-filter'
+    implementation 'io.quarkus:quarkus-kubernetes'
+    implementation 'io.quarkus:quarkus-container-image-jib'
+
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
+
+    nativeTestImplementation 'io.quarkus:quarkus-junit5'
+    nativeTestImplementation 'io.rest-assured:rest-assured'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(20)
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

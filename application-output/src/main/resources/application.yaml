@@ -1,0 +1,77 @@
+# Build time configuration & dev services configuration
+quarkus:
+  keycloak:
+    devservices:
+      realm-path: quarkus-realm.json
+  container-image:
+    group: jasonmarstoncouk
+    name: gateway
+    registry: registry.hub.docker.com
+    username: jasonmarstoncouk
+    password: dckr_pat_EMq8aKh8-ZXuQb8MWWB86uCwf94
+    push: true
+  kubernetes:
+    name: gateway
+  jib:
+    base-jvm-image: eclipse-temurin:20-jdk-alpine
+    base-registry-username: jasonmarstoncouk
+    base-registry-password: dckr_pat_EMq8aKh8-ZXuQb8MWWB86uCwf94
+
+# development profile configuration
+"%dev":
+  quarkus:
+    http:
+      port: 8081
+    oidc:
+      client-id: backend-service
+      credentials:
+        secret: secret
+      roles:
+        role-claim-path:
+          - realm_access/roles
+          - resource_access/backend-service/roles
+  smallrye:
+    jwt:
+      sign:
+        key:
+          location: privateKey.pem
+  gateway:
+    api:
+      port: 8080
+      ssl:
+        enabled: false
+      root: client-api
+    jwt:
+      issuer: https://example.com/issuer
+      role: user
+      integration:
+        subject: service
+    type: client
+
+# production profile configuration
+"%prod":
+  quarkus:
+    http:
+      port: 8080
+    oidc:
+      auth-server-url: http://keycloak:8080/realms/quarkus 
+      client-id: backend-service
+      credentials:
+        secret: secret
+  smallrye:
+    jwt:
+      sign:
+        key:
+          location: privateKey.pem
+  gateway:
+    api:
+      port: 8080
+      ssl:
+        enabled: false
+      root: client-api
+    jwt:
+      issuer: https://example.com/issuer
+      role: user
+    oidc:
+      provider: keycloak
+    type: client

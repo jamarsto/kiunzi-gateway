@@ -1,0 +1,38 @@
+plugins {
+    id 'java-library'
+    id 'io.freefair.lombok'
+    id 'io.quarkus'
+    id 'org.kordamp.gradle.jandex' 
+}
+
+repositories {
+    mavenCentral()
+}
+
+archivesBaseName = 'application-output'
+group = 'uk.me.jasonmarston.app'
+version = 'latest'
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+
+    api project(':domain')
+    api 'jakarta.ws.rs:jakarta.ws.rs-api'
+    api 'io.smallrye.reactive:mutiny'
+
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
+
+    nativeTestImplementation 'io.quarkus:quarkus-junit5'
+    nativeTestImplementation 'io.rest-assured:rest-assured'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(20)
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
