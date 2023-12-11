@@ -3,10 +3,11 @@ quarkus:
   container-image:
     group: jasonmarstoncouk
     name: gateway
-    registry: registry.hub.docker.com
-    username: jasonmarstoncouk
     password: ${DOCKER_HUB_TOKEN}
     push: true
+    registry: registry.hub.docker.com
+    tag: latest
+    username: jasonmarstoncouk
   keycloak:
     devservices:
       realm-path: quarkus-realm.json
