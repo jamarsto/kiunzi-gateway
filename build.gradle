@@ -5,10 +5,6 @@ plugins {
     id 'org.gradlex.extra-java-module-info' version '1.6.1' apply false
 }
 
-repositories {
-    mavenCentral()
-}
-
 ext {
     quarkusPlatformGroupId = 'io.quarkus'
     quarkusPlatformArtifactId = 'quarkus-universe-bom'

@@ -2,11 +2,28 @@ plugins {
     id 'java-library'
     id 'io.freefair.lombok'
     id 'io.quarkus'
-    id 'org.kordamp.gradle.jandex' 
+    id 'org.kordamp.gradle.jandex'
+    id 'maven-publish'
 }
 
-repositories {
-    mavenCentral()
+// repository for publishing artifacts
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId = 'gateway-application-input'
+            version = '0.0.1-SNAPSHOT'
+        }
+    }
+    repositories {
+        maven {
+            url 'https://pkgs.dev.azure.com/jamarston/762ffd9e-ca64-466d-84e9-7a0e42e5d89a/_packaging/Artifacts/maven/v1'
+            name 'Artifacts'
+            credentials {
+                username "jamarston"
+                password "${System.env.ARTIFACT_TOKEN}"
+            }
+        }
+    }
 }
 
 archivesBaseName = 'gateway-application-input'
