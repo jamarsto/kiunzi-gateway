@@ -7,8 +7,8 @@ repositories {
     mavenCentral()
 }
 
-archivesBaseName = 'movies'
-group = 'uk.me.jasonmarston.app'
+archivesBaseName = 'gateway'
+group = 'uk.me.jasonmarston.kiunzi'
 version = 'latest'
 
 dependencies {

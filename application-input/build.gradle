@@ -9,8 +9,8 @@ repositories {
     mavenCentral()
 }
 
-archivesBaseName = 'application-input'
-group = 'uk.me.jasonmarston.app'
+archivesBaseName = 'gateway-application-input'
+group = 'uk.me.jasonmarston.kiunzi'
 version = 'latest'
 
 dependencies {

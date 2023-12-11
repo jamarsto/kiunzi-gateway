@@ -9,8 +9,8 @@ repositories {
     mavenCentral()
 }
 
-archivesBaseName = 'framework-output'
-group = 'uk.me.jasonmarston.app'
+archivesBaseName = 'gateway-framework-output'
+group = 'uk.me.jasonmarston.kiunzi'
 version = 'latest'
 
 dependencies {
