@@ -27,6 +27,8 @@ publishing {
 archivesBaseName = 'gateway'
 group = 'uk.co.jasonmarston.kiunzi'
 version = '0.0.1-SNAPSHOT'
+//ext.tag = "${version}"
+ext.tag = 'latest'
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")

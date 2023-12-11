@@ -6,7 +6,7 @@ quarkus:
     password: ${DOCKER_HUB_TOKEN}
     push: true
     registry: registry.hub.docker.com
-    tag: latest
+    tag: ${tag}
     username: jasonmarstoncouk
   keycloak:
     devservices:
