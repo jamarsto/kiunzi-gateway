@@ -8,7 +8,7 @@ repositories {
 }
 
 archivesBaseName = 'gateway'
-group = 'uk.me.jasonmarston.kiunzi'
+group = 'uk.co.jasonmarston.kiunzi'
 version = 'latest'
 
 dependencies {
