@@ -20,8 +20,6 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     // repository for downloading dependencies
     repositories {
-        // Only used because of the pom size limits on Azure DevOps.  Remove for other artifact repositories
-        mavenCentral()
         maven {
             url 'https://pkgs.dev.azure.com/jamarston/762ffd9e-ca64-466d-84e9-7a0e42e5d89a/_packaging/Artifacts/maven/v1'
             name 'Artifacts'
