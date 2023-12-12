@@ -1,21 +1,21 @@
 # Build time configuration & dev services configuration
 quarkus:
   container-image:
-    group: jasonmarstoncouk
-    name: gateway
+    group: ${docker_group}
+    name: ${docker_name}
     password: ${DOCKER_HUB_TOKEN}
-    push: true
-    registry: registry.hub.docker.com
-    tag: ${tag}
-    username: jasonmarstoncouk
+    push: ${docker_push}
+    registry: ${docker_registry}
+    tag: ${docker.tag}
+    username: ${docker_username}
   keycloak:
     devservices:
       realm-path: quarkus-realm.json
   kubernetes:
-    name: gateway
+    name: ${kubernetes_name}
   jib:
-    base-jvm-image: eclipse-temurin:20-jdk-alpine
-    base-registry-username: jasonmarstoncouk
+    base-jvm-image: ${jib_base_jvm_image}
+    base-registry-username: ${jib_base_registry_username}
     base-registry-password: ${DOCKER_HUB_TOKEN}
 
 # development profile configuration

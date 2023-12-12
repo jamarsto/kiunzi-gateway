@@ -9,7 +9,6 @@ publishing {
     publications {
         maven(MavenPublication) {
             artifactId = 'gateway'
-            version = '0.0.1-SNAPSHOT'
         }
     }
     repositories {
@@ -27,8 +26,17 @@ publishing {
 archivesBaseName = 'gateway'
 group = 'uk.co.jasonmarston.kiunzi'
 version = '0.0.1-SNAPSHOT'
-//ext.tag = "${version}"
-ext.tag = 'latest'
+ext {
+    docker_group = 'jasonmarstoncouk'
+    docker_name = 'gateway'
+    docker_push = true
+    docker_registry = 'registry.hub.docker.com'
+    docker_tag = 'latest'
+    docker_username = 'jasonmarstoncouk'
+    jib_base_jvm_image = 'eclipse-temurin:20-jdk-alpine'
+    jib_base_registry_username = 'jasonmarstoncouk'
+    kubernetes_name = 'gateway'
+}
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
