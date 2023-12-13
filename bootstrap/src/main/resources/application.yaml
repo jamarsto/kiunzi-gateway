@@ -6,13 +6,47 @@ quarkus:
     password: ${DOCKER_HUB_TOKEN}
     push: ${docker_push}
     registry: ${docker_registry}
-    tag: ${docker.tag}
+    tag: ${docker_tag}
     username: ${docker_username}
   keycloak:
     devservices:
       realm-path: quarkus-realm.json
   kubernetes:
+    deploy: ${kubernetes_deploy}
+    env:
+      mapping:
+        api-root:
+          from-secret: kiunzi-secrets
+          with-key: api-root
+        auth-server-url:
+          from-secret: kiunzi-secrets
+          with-key: auth-server-url
+        client-id:
+          from-secret: kiunzi-secrets
+          with-key: client-id
+        client-secret:
+          from-secret: kiunzi-secrets
+          with-key: client-secret
+        gateway-type:
+          from-secret: kiunzi-secrets
+          with-key: gateway-type
+        token-issuer:
+          from-secret: kiunzi-secrets
+          with-key: token-issuer
+        token-role:
+          from-secret: kiunzi-secrets
+          with-key: token-role
+        token-subject:
+          from-secret: kiunzi-secrets
+          with-key: token-subject
+    mounts:
+      private-key-volume:
+        path: /keyfiles
     name: ${kubernetes_name}
+    namespace: ${kubernetes_namespace}
+    secret-volumes:
+      private-key-volume:
+        secret-name: kiunzi-private-key-secret
   jib:
     base-jvm-image: ${jib_base_jvm_image}
     base-registry-username: ${jib_base_registry_username}
@@ -24,7 +58,7 @@ quarkus:
     http:
       port: 8081
     oidc:
-      client-id: backend-service
+      client-id: ${CLIENT_ID}
       credentials:
         secret: ${CLIENT_SECRET}
       roles:
@@ -39,15 +73,15 @@ quarkus:
   gateway:
     api:
       port: 8080
-      root: client-api
+      root: ${API_ROOT}
       ssl:
         enabled: false
     jwt:
       integration:
-        subject: service
-      issuer: https://example.com/issuer
-      role: user
-    type: client
+        subject: ${TOKEN_SUBJECT}
+      issuer: ${TOKEN_ISSUER}
+      role: ${TOKEN_ROLE}
+    type: ${GATEWAY_TYPE}
 
 # production profile configuration
 "%prod":
@@ -55,8 +89,8 @@ quarkus:
     http:
       port: 8080
     oidc:
-      auth-server-url: http://localhost:8080/realms/quarkus
-      client-id: backend-service
+      auth-server-url: ${AUTH_SERVER_URL}
+      client-id: ${CLIENT_ID}
       credentials:
         secret: ${CLIENT_SECRET}
       roles:
@@ -67,16 +101,16 @@ quarkus:
     jwt:
       sign:
         key:
-          location: privateKey.pem
+          location: /keyfiles/privateKey.pem
   gateway:
     api:
       port: 8080
-      root: client-api
+      root: ${API_ROOT}
       ssl:
         enabled: false
     jwt:
       integration:
-        subject: service
-      issuer: https://example.com/issuer
-      role: user
-    type: client
+        subject: ${TOKEN_SUBJECT}
+      issuer: ${TOKEN_ISSUER}
+      role: ${TOKEN_ROLE}
+    type: ${GATEWAY_TYPE}

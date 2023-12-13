@@ -35,7 +35,9 @@ ext {
     docker_username = 'jasonmarstoncouk'
     jib_base_jvm_image = 'eclipse-temurin:20-jdk-alpine'
     jib_base_registry_username = 'jasonmarstoncouk'
+    kubernetes_deploy = 'true'
     kubernetes_name = 'gateway'
+    kubernetes_namespace = 'default'
 }
 
 dependencies {
