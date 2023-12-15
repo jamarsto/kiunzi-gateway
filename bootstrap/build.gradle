@@ -51,6 +51,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-oidc'
     implementation 'io.quarkus:quarkus-oidc-client-reactive-filter'
     implementation 'io.quarkus:quarkus-kubernetes'
+    implementation 'io.quarkus:quarkus-kubernetes-config'
     implementation 'io.quarkus:quarkus-container-image-jib'
 
     testImplementation 'io.quarkus:quarkus-junit5'

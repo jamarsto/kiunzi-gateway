@@ -13,32 +13,6 @@ quarkus:
       realm-path: quarkus-realm.json
   kubernetes:
     deploy: ${kubernetes_deploy}
-    env:
-      mapping:
-        api-root:
-          from-secret: kiunzi-secrets
-          with-key: api-root
-        auth-server-url:
-          from-secret: kiunzi-secrets
-          with-key: auth-server-url
-        client-id:
-          from-secret: kiunzi-secrets
-          with-key: client-id
-        client-secret:
-          from-secret: kiunzi-secrets
-          with-key: client-secret
-        gateway-type:
-          from-secret: kiunzi-secrets
-          with-key: gateway-type
-        token-issuer:
-          from-secret: kiunzi-secrets
-          with-key: token-issuer
-        token-role:
-          from-secret: kiunzi-secrets
-          with-key: token-role
-        token-subject:
-          from-secret: kiunzi-secrets
-          with-key: token-subject
     mounts:
       private-key-volume:
         path: /keyfiles
@@ -46,7 +20,7 @@ quarkus:
     namespace: ${kubernetes_namespace}
     secret-volumes:
       private-key-volume:
-        secret-name: kiunzi-private-key-secret
+        secret-name: token-service
   jib:
     base-jvm-image: ${jib_base_jvm_image}
     base-registry-username: ${jib_base_registry_username}
@@ -62,9 +36,7 @@ quarkus:
       credentials:
         secret: ${CLIENT_SECRET}
       roles:
-        role-claim-path:
-          - realm_access/roles
-          - resource_access/backend-service/roles
+        role-claim-path: ${ROLE_CLAIM_PATH}
   smallrye:
     jwt:
       sign:
@@ -89,28 +61,26 @@ quarkus:
     http:
       port: 8080
     oidc:
-      auth-server-url: ${AUTH_SERVER_URL}
-      client-id: ${CLIENT_ID}
+      auth-server-url: ${auth-server-url}
+      client-id: ${client-id}
       credentials:
-        secret: ${CLIENT_SECRET}
+        secret: ${client-secret}
       roles:
-        role-claim-path:
-          - realm_access/roles
-          - resource_access/backend-service/roles
+        role-claim-path: ${role-claim-path}
   smallrye:
     jwt:
       sign:
         key:
-          location: /keyfiles/privateKey.pem
+          location: /keyfiles/tls.key
   gateway:
     api:
       port: 8080
-      root: ${API_ROOT}
+      root: ${api-root}
       ssl:
         enabled: false
     jwt:
       integration:
-        subject: ${TOKEN_SUBJECT}
-      issuer: ${TOKEN_ISSUER}
-      role: ${TOKEN_ROLE}
-    type: ${GATEWAY_TYPE}
+        subject: ${token-subject}
+      issuer: ${token-issuer}
+      role: ${token-role}
+    type: ${gateway-type}

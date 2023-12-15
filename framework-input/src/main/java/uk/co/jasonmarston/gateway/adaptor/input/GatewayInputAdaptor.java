@@ -32,7 +32,7 @@ import uk.co.jasonmarston.gateway.valueobject.Payload;
 @Produces(MediaType.APPLICATION_JSON)
 @OidcClientFilter
 @PermitAll
-public class GatewayInputAdpator {
+public class GatewayInputAdaptor {
 	private static final Uni<Response> UNAUTHORIZED = Uni
 		.createFrom()
 		.item(Response
