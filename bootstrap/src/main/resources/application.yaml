@@ -41,7 +41,7 @@ quarkus:
     jwt:
       sign:
         key:
-          location: privateKey.pem
+          location: tls.key
   gateway:
     api:
       port: 8080
