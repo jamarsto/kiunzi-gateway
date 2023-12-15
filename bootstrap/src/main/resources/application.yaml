@@ -71,7 +71,7 @@ quarkus:
     jwt:
       sign:
         key:
-          location: /keyfiles/tls.key
+          location: file:/keyfiles/tls.key
   gateway:
     api:
       port: 8080
