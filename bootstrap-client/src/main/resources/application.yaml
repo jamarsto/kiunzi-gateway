@@ -72,7 +72,7 @@ quarkus:
       port: 8080
     kubernetes-config:
       secrets:
-        ~: kiunzi-gateway-secrets, kiunzi-client-secrets
+        ~: kiunzi-common-secrets, kiunzi-gateway-secrets, kiunzi-gateway-client-secrets
         enabled: true
     oidc:
       auth-server-url: ${auth-server-url}

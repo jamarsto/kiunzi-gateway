@@ -1,0 +1,75 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: client-demo-certificate
+  namespace: istio-system
+spec:
+  issuerRef:
+    name: letsencrypt-issuer
+  secretName: client-demo-secrets
+  commonName: www.demo.jasonmarston.co.uk
+  dnsNames:
+  - demo.jasonmarston.co.uk
+  - www.demo.jasonmarston.co.uk
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: client-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 8080
+      name: http
+      protocol: HTTP
+    hosts:
+    - www.demo.jasonmarston.co.uk
+    - demo.jasonmarston.co.uk
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 8443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - www.demo.jasonmarston.co.uk
+    - demo.jasonmarston.co.uk
+    tls:
+      mode: SIMPLE
+      credentialName: client-demo-secrets
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: client
+  namespace: istio-system
+spec:
+  hosts:
+  - www.demo.jasonmarston.co.uk
+  - demo.jasonmarston.co.uk
+  gateways:
+  - client-gateway
+  http:
+  - name: client-route
+    match:
+    - uri:
+        prefix: "/api"
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        host: gateway.default.svc.cluster.local
+        port:
+          number: 8080
+  - name: webapp-route
+    match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: webapp.default.svc.cluster.local
+        port:
+          number: 8080

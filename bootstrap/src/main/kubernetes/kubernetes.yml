@@ -1,0 +1,92 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: client-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - www.demo.jasonmarston.co.uk
+    - demo.jasonmarston.co.uk
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - www.demo.jasonmarston.co.uk
+    - demo.jasonmarston.co.uk
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: integration-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - integration.demo.jasonmarston.co.uk
+      tls:
+        httpsRedirect: true
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      hosts:
+        - integration.demo.jasonmarston.co.uk
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: client
+spec:
+  hosts:
+  - client
+  gateways:
+  - client-gateway
+  http:
+  - name: client-route
+    match:
+    - uri:
+        prefix: "/api"
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        host: gateway
+  - name: webapp-route
+    match:
+      - uri:
+          prefix: "/"
+    route:
+      - destination:
+          host: webapp
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: integration
+spec:
+  hosts:
+    - integration
+  gateways:
+    - integration-gateway
+  http:
+    - name: integration-route
+      match:
+        - uri:
+            prefix: "/"
+      route:
+        - destination:
+            host: integration

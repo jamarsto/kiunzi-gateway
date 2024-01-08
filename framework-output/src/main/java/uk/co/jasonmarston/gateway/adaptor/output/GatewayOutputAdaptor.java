@@ -70,7 +70,6 @@ public class GatewayOutputAdaptor implements GatewayOutputPort {
 	public Uni<Response> put(
 		final Destination destination,
 		final Payload payload) {
-		warn("Entered put output adaptor");
 		return execute(HttpMethod.PUT, destination, payload);
 	}
 
@@ -108,7 +107,9 @@ public class GatewayOutputAdaptor implements GatewayOutputPort {
 			.onItem()
 			.transformToUni(this::buildResponse)
 			.onFailure()
-			.recoverWithItem(() -> NOT_FOUND);
+			.recoverWithItem(() -> {
+				return NOT_FOUND;
+			});
 	}
 
 	private HttpClientRequest setHeaders(

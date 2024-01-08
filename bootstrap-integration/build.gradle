@@ -8,7 +8,7 @@ plugins {
 publishing {
     publications {
         maven(MavenPublication) {
-            artifactId = 'gateway'
+            artifactId = 'gateway-integration'
         }
     }
     repositories {
@@ -23,12 +23,12 @@ publishing {
     }
 }
 
-archivesBaseName = 'gateway'
+archivesBaseName = 'gateway-integration'
 group = 'uk.co.jasonmarston.kiunzi'
 version = '0.0.1-SNAPSHOT'
 ext {
     docker_group = 'jasonmarstoncouk'
-    docker_name = 'gateway'
+    docker_name = 'gateway-integration'
     docker_push = 'true'
     docker_registry = 'registry.hub.docker.com'
     docker_tag = 'latest'
@@ -36,7 +36,7 @@ ext {
     jib_base_jvm_image = 'eclipse-temurin:20-jdk-alpine'
     jib_base_registry_username = 'jasonmarstoncouk'
     kubernetes_deploy = 'true'
-    kubernetes_name = 'gateway'
+    kubernetes_name = 'gateway-integration'
     kubernetes_namespace = 'default'
 }
 

@@ -1,0 +1,123 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: integration-demo-mtls
+  namespace: istio-system
+spec:
+  isCA: true
+  duration: 8760h # 365d
+  renewBefore: 2920h # 121d
+  subject:
+    organizations:
+    - jasonmarston
+  commonName: integration-demo-mtls
+  dnsNames:
+  - integration-demo-mtls
+  secretName: integration-demo-secrets-cacert
+  # The above secret name is vital. Adding the "-cacert" to the end of the server tls certificate secret name
+  # allows us to decouple the client auth certificate authority from the server auth certificate authority
+  privateKey:
+    rotationPolicy: Always
+    encoding: PKCS8
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: client-certificate-issuer
+  namespace: istio-system
+spec:
+  ca:
+    secretName: integration-demo-secrets-cacert
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: client-certificate
+  namespace: istio-system
+spec:
+  isCA: false
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
+  subject:
+    organizations:
+    - jasonmarston
+  commonName: client
+  dnsNames:
+  - client
+  secretName: client-secrets
+  usages:
+  - client auth
+  privateKey:
+    rotationPolicy: Always
+    encoding: PKCS8
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: client-certificate-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: integration-demo-certificate
+  namespace: istio-system
+spec:
+  issuerRef:
+    name: letsencrypt-issuer
+  secretName: integration-demo-secrets
+  commonName: integration.demo.jasonmarston.co.uk
+  dnsNames:
+  - integration.demo.jasonmarston.co.uk
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: integration-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 8080
+      name: http
+      protocol: HTTP
+    hosts:
+    - integration.demo.jasonmarston.co.uk
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 8443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - integration.demo.jasonmarston.co.uk
+    tls:
+      mode: MUTUAL
+      credentialName: integration-demo-secrets
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: integration
+spec:
+  hosts:
+  - integration.demo.jasonmarston.co.uk
+  gateways:
+  - integration-gateway
+  http:
+  - name: integration-route
+    match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: integration.default.svc.cluster.local
+        port:
+          number: 8080
