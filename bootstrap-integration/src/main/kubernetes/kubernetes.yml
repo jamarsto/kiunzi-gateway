@@ -80,6 +80,7 @@ apiVersion: networking.istio.io/v1beta1
 kind: Gateway
 metadata:
   name: integration-gateway
+  namespace: istio-system
 spec:
   selector:
     istio: ingressgateway
@@ -106,6 +107,7 @@ apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: integration
+  namespace: istio-system
 spec:
   hosts:
   - integration.demo.jasonmarston.co.uk
@@ -118,6 +120,6 @@ spec:
         prefix: "/"
     route:
     - destination:
-        host: integration.default.svc.cluster.local
+        host: gateway-integration.default.svc.cluster.local
         port:
-          number: 8080
+          number: 80

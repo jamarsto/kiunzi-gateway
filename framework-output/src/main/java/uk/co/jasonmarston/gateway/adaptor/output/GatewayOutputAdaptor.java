@@ -20,8 +20,6 @@ import uk.co.jasonmarston.gateway.output.port.GatewayOutputPort;
 import uk.co.jasonmarston.gateway.valueobject.Destination;
 import uk.co.jasonmarston.gateway.valueobject.Payload;
 
-import static io.quarkus.logging.Log.*;
-
 @ApplicationScoped
 public class GatewayOutputAdaptor implements GatewayOutputPort {
 	private static final String BEARER_PREFIX = "Bearer ";
@@ -107,9 +105,7 @@ public class GatewayOutputAdaptor implements GatewayOutputPort {
 			.onItem()
 			.transformToUni(this::buildResponse)
 			.onFailure()
-			.recoverWithItem(() -> {
-				return NOT_FOUND;
-			});
+			.recoverWithItem(() -> NOT_FOUND);
 	}
 
 	private HttpClientRequest setHeaders(

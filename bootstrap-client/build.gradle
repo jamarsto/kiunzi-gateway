@@ -33,7 +33,7 @@ ext {
     docker_registry = 'registry.hub.docker.com'
     docker_tag = 'latest'
     docker_username = 'jasonmarstoncouk'
-    jib_base_jvm_image = 'eclipse-temurin:20-jdk-alpine'
+    jib_base_jvm_image = 'eclipse-temurin:21-jdk-alpine'
     jib_base_registry_username = 'jasonmarstoncouk'
     kubernetes_deploy = 'true'
     kubernetes_name = 'gateway-client'
