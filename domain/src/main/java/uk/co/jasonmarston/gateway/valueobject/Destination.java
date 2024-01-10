@@ -13,6 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Setter(AccessLevel.PRIVATE)
 public class Destination {
-	private String hostName;
-	private String path;
+    private String hostName;
+    private String path;
 }

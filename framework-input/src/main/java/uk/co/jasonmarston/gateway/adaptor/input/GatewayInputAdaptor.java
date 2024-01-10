@@ -33,121 +33,121 @@ import uk.co.jasonmarston.gateway.valueobject.Payload;
 @OidcClientFilter
 @PermitAll
 public class GatewayInputAdaptor {
-	private static final Uni<Response> UNAUTHORIZED = Uni
-		.createFrom()
-		.item(Response
-			.status(Status.UNAUTHORIZED)
-			.build()
-		);
+    private static final Uni<Response> UNAUTHORIZED = Uni
+        .createFrom()
+        .item(Response
+            .status(Status.UNAUTHORIZED)
+            .build()
+        );
 
-	@Inject
-	private AuthService authService;
+    @Inject
+    private AuthService authService;
 
-	@Inject
-	private TokenService tokenService;
+    @Inject
+    private TokenService tokenService;
 
-	@Inject
-	private GatewayUseCase gatewayUseCase;
+    @Inject
+    private GatewayUseCase gatewayUseCase;
 
-	@ConfigProperty(
-		name="gateway.api.root",
-		defaultValue = "client-api"
-	)
-	private String apiRoot;
+    @ConfigProperty(
+        name="gateway.api.root",
+        defaultValue = "client-api"
+    )
+    private String apiRoot;
 
-	@POST
-	@Path("{path:.*}")
-	public Uni<Response> post(
-		final String body,
-		@PathParam("path") final String path,
-		@Context final HttpServerRequest request
-	) {
-		if(authService.unAuthorized()) {
-			return UNAUTHORIZED;
-		}
-		final Destination destination = DestinationBuilder
-			.buildDestination(
-				apiRoot,
-				path,
-				request.query()
-			);
-		final Payload payload = Payload
-			.builder()
-			.body(body)
-			.token(tokenService.generateToken())
-			.build();
-		return gatewayUseCase
-			.post(destination, payload);
-	}
+    @POST
+    @Path("{path:.*}")
+    public Uni<Response> post(
+        final String body,
+        @PathParam("path") final String path,
+        @Context final HttpServerRequest request
+    ) {
+        if(authService.unAuthorized()) {
+            return UNAUTHORIZED;
+        }
+        final Destination destination = DestinationBuilder
+            .buildDestination(
+                apiRoot,
+                path,
+                request.query()
+            );
+        final Payload payload = Payload
+            .builder()
+            .body(body)
+            .token(tokenService.generateToken())
+            .build();
+        return gatewayUseCase
+            .post(destination, payload);
+    }
 
-	@GET
-	@Path("{path:.*}")
-	public Uni<Response> get(
-		@PathParam("path") final String path,
-		@Context final HttpServerRequest request
-	) {
-		if(authService.unAuthorized()) {
-			return UNAUTHORIZED;
-		}
-		final Destination destination = DestinationBuilder
-			.buildDestination(
-				apiRoot,
-				path,
-				request.query()
-			);
-		final Payload payload = Payload
-			.builder()
-			.token(tokenService.generateToken())
-			.build();
-		return gatewayUseCase
-			.get(destination, payload);
-	}
+    @GET
+    @Path("{path:.*}")
+    public Uni<Response> get(
+        @PathParam("path") final String path,
+        @Context final HttpServerRequest request
+    ) {
+        if(authService.unAuthorized()) {
+            return UNAUTHORIZED;
+        }
+        final Destination destination = DestinationBuilder
+            .buildDestination(
+                apiRoot,
+                path,
+                request.query()
+            );
+        final Payload payload = Payload
+            .builder()
+            .token(tokenService.generateToken())
+            .build();
+        return gatewayUseCase
+            .get(destination, payload);
+    }
 
-	@PUT
-	@Path("{path:.*}")
-	public Uni<Response> put(
-		final String body,
-		@PathParam("path") final String path,
-		@Context final HttpServerRequest request
-	) {
-		if(authService.unAuthorized()) {
-			return UNAUTHORIZED;
-		}
-		final Destination destination = DestinationBuilder
-			.buildDestination(
-				apiRoot,
-				path,
-				request.query()
-			);
-		final Payload payload = Payload
-			.builder()
-			.body(body)
-			.token(tokenService.generateToken())
-			.build();
-		return gatewayUseCase
-			.put(destination, payload);
-	}
+    @PUT
+    @Path("{path:.*}")
+    public Uni<Response> put(
+        final String body,
+        @PathParam("path") final String path,
+        @Context final HttpServerRequest request
+    ) {
+        if(authService.unAuthorized()) {
+            return UNAUTHORIZED;
+        }
+        final Destination destination = DestinationBuilder
+            .buildDestination(
+                apiRoot,
+                path,
+                request.query()
+            );
+        final Payload payload = Payload
+            .builder()
+            .body(body)
+            .token(tokenService.generateToken())
+            .build();
+        return gatewayUseCase
+            .put(destination, payload);
+    }
 
-	@DELETE
-	@Path("{path:.*}")
-	public Uni<Response> delete(
-		@PathParam("path") final String path,
-		@Context final HttpServerRequest request
-	) {
-		if(authService.unAuthorized()) {
-			return UNAUTHORIZED;
-		}
-		final Destination destination = DestinationBuilder
-			.buildDestination(
-				apiRoot,
-				path,
-				request.query()
-			);
-		final Payload payload = Payload
-			.builder()
-			.token(tokenService.generateToken())
-			.build();
-		return gatewayUseCase
-			.delete(destination, payload);
-	}
+    @DELETE
+    @Path("{path:.*}")
+    public Uni<Response> delete(
+        @PathParam("path") final String path,
+        @Context final HttpServerRequest request
+    ) {
+        if(authService.unAuthorized()) {
+            return UNAUTHORIZED;
+        }
+        final Destination destination = DestinationBuilder
+            .buildDestination(
+                apiRoot,
+                path,
+                request.query()
+            );
+        final Payload payload = Payload
+            .builder()
+            .token(tokenService.generateToken())
+            .build();
+        return gatewayUseCase
+            .delete(destination, payload);
+    }
 }

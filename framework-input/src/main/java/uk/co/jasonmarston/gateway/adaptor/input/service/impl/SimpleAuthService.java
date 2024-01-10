@@ -10,42 +10,35 @@ import uk.co.jasonmarston.gateway.adaptor.input.service.TokenService;
 
 @ApplicationScoped
 public class SimpleAuthService implements AuthService {
-	@Inject
-	private JsonWebToken jsonWebToken;
-	@Inject
-	private TokenService tokenService;
+    @Inject
+    private JsonWebToken jsonWebToken;
+    @Inject
+    private TokenService tokenService;
 
-	@ConfigProperty(
-		name="gateway.type",
-		defaultValue = "client"
-	)
-	private String gatewayType;
-	
-	@ConfigProperty(
-		name="gateway.jwt.role",
-		defaultValue = "user"
-	)
-	private String role;
-	
+    @ConfigProperty(
+        name="gateway.type",
+        defaultValue = "client"
+    )
+    private String gatewayType;
 
-	@Override
-	public boolean unAuthorized() {
-		if(isIntegrationGateway()) {
-			if(jsonWebToken.getClaimNames() == null) {
-				return false;
-			}
-			return true;
-		}
-		if(jsonWebToken == null) {
-			return true;
-		}
-		return tokenService.isNotAssignedRole(role);
-	}
+    @ConfigProperty(
+        name="gateway.jwt.role",
+        defaultValue = "user"
+    )
+    private String role;
 
-	private boolean isIntegrationGateway() {
-		if("integration".equals(gatewayType)) {
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean unAuthorized() {
+        if(isIntegrationGateway()) {
+            return jsonWebToken.getClaimNames() != null;
+        }
+        if(jsonWebToken == null) {
+            return true;
+        }
+        return tokenService.isNotAssignedRole(role);
+    }
+
+    private boolean isIntegrationGateway() {
+        return "integration".equals(gatewayType);
+    }
 }

@@ -12,44 +12,41 @@ import uk.co.jasonmarston.gateway.adaptor.input.service.TokenService;
 
 @ApplicationScoped
 public class SimpleTokenService implements TokenService {
-	@Inject
-	private JwtConverter jwtConverter;
+    @Inject
+    private JwtConverter jwtConverter;
 
-	@Inject
-	private JwtCreator jwtCreator;
+    @Inject
+    private JwtCreator jwtCreator;
 
-	@ConfigProperty(
-		name="gateway.type",
-		defaultValue = "client"
-	)
-	private String gatewayType;
+    @ConfigProperty(
+        name="gateway.type",
+        defaultValue = "client"
+    )
+    private String gatewayType;
 
-	@Override
-	public String generateToken() {
-		if(isIntegrationGateway()) {
-			return jwtCreator.getToken();
-		}
-		return jwtConverter.getToken();
-	}
+    @Override
+    public String generateToken() {
+        if(isIntegrationGateway()) {
+            return jwtCreator.getToken();
+        }
+        return jwtConverter.getToken();
+    }
 
-	@Override
-	public boolean isNotAssignedRole(final String role) {
-		final Set<String> roles = jwtConverter.getRoles();
-		if(roles == null) {
-			return true;
-		}
-		for(final String group : roles) {
-			if(role.equals(group)) {
-				return false;
-			}
-		}
-		return true;
-	}
+    @Override
+    public boolean isNotAssignedRole(final String role) {
+        final Set<String> roles = jwtConverter.getRoles();
+        if(roles == null) {
+            return true;
+        }
+        for(final String group : roles) {
+            if(role.equals(group)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	private boolean isIntegrationGateway() {
-		if("integration".equals(gatewayType)) {
-			return true;
-		}
-		return false;
-	}
+    private boolean isIntegrationGateway() {
+        return "integration".equals(gatewayType);
+    }
 }

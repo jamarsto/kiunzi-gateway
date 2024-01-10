@@ -1,5 +1,5 @@
 module domain {
-	requires static lombok;
+    requires static lombok;
 
-	exports uk.co.jasonmarston.gateway.valueobject;
+    exports uk.co.jasonmarston.gateway.valueobject;
 }

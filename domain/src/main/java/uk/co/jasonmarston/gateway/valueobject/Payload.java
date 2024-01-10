@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class Payload {
-	private String body;
-	private String token;
+    private String body;
+    private String token;
 }

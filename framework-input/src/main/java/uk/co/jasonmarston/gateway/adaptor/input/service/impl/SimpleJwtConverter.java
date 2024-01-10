@@ -19,144 +19,142 @@ import uk.co.jasonmarston.gateway.adaptor.input.service.JwtConverter;
 
 @ApplicationScoped
 public class SimpleJwtConverter implements JwtConverter {
-	private static final String SEPARATOR = "/";
-	private static final String PREFERRED_USERNAME = "preferred_username";
-	private static final String UNIQUE_NAME = "unique_name";
-	private static final String UPN = "upn";
-	private static final String EMAIL = "email";
-	
-	private final List<String> defaultRoleClaimsPath; 
+    private static final String SEPARATOR = "/";
+    private static final String PREFERRED_USERNAME = "preferred_username";
+    private static final String UNIQUE_NAME = "unique_name";
+    private static final String UPN = "upn";
+    private static final String EMAIL = "email";
 
-	@Inject
-	private JsonWebToken jsonWebToken;
-	@ConfigProperty(
-		name="gateway.jwt.issuer",
-		defaultValue = "https://example.com/issuer"
-	)
-	private String issuer;
+    private final List<String> defaultRoleClaimsPath;
 
-	@ConfigProperty(name = "quarkus.oidc.roles.role-claim-path")
-	private List<String> roleClaimPaths;
+    @Inject
+    private JsonWebToken jsonWebToken;
 
-	@Inject
-	public SimpleJwtConverter(
-		@ConfigProperty(
-			name = "quarkus.oidc.client-id",
-			defaultValue=""
-		)
-		final String clientId
-	) {
-		this.defaultRoleClaimsPath = new ArrayList<String> (
-			List
-				.of(
-					"realm_access/roles",
-					"resource_access/" + clientId + "/roles"
-				)
-			);
-	}
+    @ConfigProperty(
+        name="gateway.jwt.issuer",
+        defaultValue = "https://example.com/issuer"
+    )
+    private String issuer;
 
-	@Override
-	public String getToken() {
-		final JwtClaimsBuilder builder = Jwt.issuer(issuer);
+    @ConfigProperty(name = "quarkus.oidc.roles.role-claim-path")
+    private List<String> roleClaimPaths;
 
-		final String subject = jsonWebToken.getSubject();
-		if(null != subject) {
-			builder.subject(subject);
-		}
+    @Inject
+    public SimpleJwtConverter(
+        @ConfigProperty(
+            name = "quarkus.oidc.client-id",
+            defaultValue=""
+        )
+        final String clientId
+    ) {
+        this.defaultRoleClaimsPath = new ArrayList<> (
+            List
+                .of(
+                    "realm_access/roles",
+                    "resource_access/" + clientId + "/roles"
+                )
+        );
+    }
 
-		final String preferredUserName = getPreferredUsername();
-		if(null != preferredUserName) {
-			builder.preferredUserName(preferredUserName);
-		}
+    @Override
+    public String getToken() {
+        final JwtClaimsBuilder builder = Jwt.issuer(issuer);
 
-		final String email = jsonWebToken.getClaim(EMAIL);
-		if(null != email) {
-			builder.claim(EMAIL, email);
-		}
+        final String subject = jsonWebToken.getSubject();
+        if(null != subject) {
+            builder.subject(subject);
+        }
 
-		builder.groups(getRoles());
+        final String preferredUserName = getPreferredUsername();
+        if(null != preferredUserName) {
+            builder.preferredUserName(preferredUserName);
+        }
 
-		return builder.sign();
-	}
+        final String email = jsonWebToken.getClaim(EMAIL);
+        if(null != email) {
+            builder.claim(EMAIL, email);
+        }
 
-	@Override
-	public Set<String> getRoles() {
-		final Set<String> roles = new HashSet<>();
-		for(String claimPath : getRoleClaimPaths()) {
-			final JsonValue jsonValue = getJsonValue(claimPath, SEPARATOR);
+        builder.groups(getRoles());
 
-			if(jsonValue == null) {
-				continue;
-			}
+        return builder.sign();
+    }
 
-			if(jsonValue instanceof JsonObject) {
-				roles.add(StringUtility
-					.unquoteString(jsonValue.toString()));
-				continue;
-			}
+    @Override
+    public Set<String> getRoles() {
+        final Set<String> roles = new HashSet<>();
+        for(String claimPath : getRoleClaimPaths()) {
+            final JsonValue jsonValue = getJsonValue(claimPath);
 
-			roles
-				.addAll(jsonValue
-					.asJsonArray()
-					.stream()
-					.map(role -> StringUtility
-						.unquoteString(role.toString()))
-					.collect(Collectors.toSet()));
-		}
-		return roles;
-	}
+            if(jsonValue == null) {
+                continue;
+            }
 
-	private List<String> getRoleClaimPaths() {
-		if(roleClaimPaths == null || roleClaimPaths.size() == 0) {
-			return defaultRoleClaimsPath;
-		}
+            if(jsonValue instanceof JsonObject) {
+                roles.add(StringUtility
+                    .unquoteString(jsonValue.toString())
+                );
+                continue;
+            }
 
-		return roleClaimPaths;
-	}
+            roles
+                .addAll(jsonValue
+                    .asJsonArray()
+                    .stream()
+                    .map(role -> StringUtility
+                        .unquoteString(role.toString())
+                    )
+                    .collect(Collectors.toSet())
+                );
+        }
+        return roles;
+    }
 
-	private JsonValue getJsonValue(
-		final String claimPath,
-		final String separator
-	) {
-		final String[] claimPathSegments = claimPath
-			.split(separator);
+    private List<String> getRoleClaimPaths() {
+        if(roleClaimPaths == null || roleClaimPaths.isEmpty()) {
+            return defaultRoleClaimsPath;
+        }
 
-		JsonValue jsonValue = jsonWebToken
-			.getClaim(claimPathSegments[0]);
+        return roleClaimPaths;
+    }
 
-		for(int i = 1; i < claimPathSegments.length; i++) {
-			if(jsonValue == null) {
-				break;
-			}
+    private JsonValue getJsonValue(
+        final String claimPath
+    ) {
+        final String[] claimPathSegments = claimPath
+            .split(SEPARATOR);
 
-			final String claimPathSegment = claimPathSegments[i];
+        JsonValue jsonValue = jsonWebToken
+            .getClaim(claimPathSegments[0]);
 
-			jsonValue = jsonValue
-				.asJsonObject()
-				.get(claimPathSegment);
-		}
+        for(int i = 1; i < claimPathSegments.length; i++) {
+            if(jsonValue == null) {
+                break;
+            }
 
-		return jsonValue;
-	}
-	
-	private String getPreferredUsername() {
-		final String preferredUsername = jsonWebToken
-			.getClaim(PREFERRED_USERNAME);
-		if(preferredUsername != null) {
-			return preferredUsername;
-		}
+            final String claimPathSegment = claimPathSegments[i];
 
-		final String uniqueName = jsonWebToken
-			.getClaim(UNIQUE_NAME);
-		if(uniqueName != null) {
-			return uniqueName;
-		}
+            jsonValue = jsonValue
+                .asJsonObject()
+                .get(claimPathSegment);
+        }
 
-		final String upn = jsonWebToken.getClaim(UPN);
-		if(upn != null) {
-			return upn;
-		}
+        return jsonValue;
+    }
 
-		return null;
-	}
+    private String getPreferredUsername() {
+        final String preferredUsername = jsonWebToken
+            .getClaim(PREFERRED_USERNAME);
+        if(preferredUsername != null) {
+            return preferredUsername;
+        }
+
+        final String uniqueName = jsonWebToken
+            .getClaim(UNIQUE_NAME);
+        if(uniqueName != null) {
+            return uniqueName;
+        }
+
+        return jsonWebToken.getClaim(UPN);
+    }
 }
