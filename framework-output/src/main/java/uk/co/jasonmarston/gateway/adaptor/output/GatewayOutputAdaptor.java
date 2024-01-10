@@ -75,6 +75,14 @@ public class GatewayOutputAdaptor implements GatewayOutputPort {
     }
 
     @Override
+    public Uni<Response> patch(
+            final Destination destination,
+            final Payload payload
+    ) {
+        return execute(HttpMethod.PATCH, destination, payload);
+    }
+
+    @Override
     public Uni<Response> delete(
         final Destination destination,
         final Payload payload
@@ -117,8 +125,10 @@ public class GatewayOutputAdaptor implements GatewayOutputPort {
         final HttpMethod httpMethod,
         final Payload payload
     ) {
+        // update this to pass along the headers from the original request except for exclusions. Exclusions default to Cookies, Set-Cookie, and Authorization (that one we replace as done at end of method)
         if(HttpMethod.POST.equals(httpMethod) ||
-            HttpMethod.PUT.equals(httpMethod)
+            HttpMethod.PUT.equals(httpMethod) ||
+            HttpMethod.PATCH.equals(httpMethod)
         ) {
             clientRequest
                 .putHeader(

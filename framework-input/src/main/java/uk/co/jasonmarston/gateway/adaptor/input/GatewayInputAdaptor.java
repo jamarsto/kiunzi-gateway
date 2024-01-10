@@ -1,5 +1,6 @@
 package uk.co.jasonmarston.gateway.adaptor.input;
 
+import jakarta.ws.rs.*;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import io.quarkus.oidc.client.filter.OidcClientFilter;
@@ -8,14 +9,6 @@ import io.vertx.core.http.HttpServerRequest;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -126,6 +119,31 @@ public class GatewayInputAdaptor {
             .build();
         return gatewayUseCase
             .put(destination, payload);
+    }
+
+    @PATCH
+    @Path("{path:.*}")
+    public Uni<Response> patch(
+            final String body,
+            @PathParam("path") final String path,
+            @Context final HttpServerRequest request
+    ) {
+        if(authService.unAuthorized()) {
+            return UNAUTHORIZED;
+        }
+        final Destination destination = DestinationBuilder
+                .buildDestination(
+                        apiRoot,
+                        path,
+                        request.query()
+                );
+        final Payload payload = Payload
+                .builder()
+                .body(body)
+                .token(tokenService.generateToken())
+                .build();
+        return gatewayUseCase
+                .patch(destination, payload);
     }
 
     @DELETE

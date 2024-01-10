@@ -39,6 +39,14 @@ public class GatewayInputPort implements GatewayUseCase {
     }
 
     @Override
+    public Uni<Response> patch(
+        final Destination destination,
+        final Payload payload
+    ) {
+        return gatewayOutputPort.patch(destination, payload);
+    }
+
+    @Override
     public Uni<Response> delete(
         final Destination destination,
         final Payload payload

@@ -18,6 +18,10 @@ public interface GatewayOutputPort {
         final Destination destination,
         final Payload payload
     );
+    Uni<Response> patch(
+        final Destination destination,
+        final Payload payload
+    );
     Uni<Response> delete(
         final Destination destination,
         final Payload payload
