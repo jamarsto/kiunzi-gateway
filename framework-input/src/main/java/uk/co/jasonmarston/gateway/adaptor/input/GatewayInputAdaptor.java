@@ -55,22 +55,12 @@ public class GatewayInputAdaptor {
         @PathParam("path") final String path,
         @Context final HttpServerRequest request
     ) {
-        if(authService.unAuthorized()) {
-            return UNAUTHORIZED;
-        }
-        final Destination destination = DestinationBuilder
-            .buildDestination(
-                apiRoot,
-                path,
-                request.query()
-            );
-        final Payload payload = Payload
-            .builder()
-            .body(body)
-            .token(tokenService.generateToken())
-            .build();
-        return gatewayUseCase
-            .post(destination, payload);
+        return execute(
+            HttpMethod.POST,
+            body,
+            path,
+            request
+        );
     }
 
     @GET
@@ -79,26 +69,60 @@ public class GatewayInputAdaptor {
         @PathParam("path") final String path,
         @Context final HttpServerRequest request
     ) {
-        if(authService.unAuthorized()) {
-            return UNAUTHORIZED;
-        }
-        final Destination destination = DestinationBuilder
-            .buildDestination(
-                apiRoot,
-                path,
-                request.query()
-            );
-        final Payload payload = Payload
-            .builder()
-            .token(tokenService.generateToken())
-            .build();
-        return gatewayUseCase
-            .get(destination, payload);
+        return execute(
+            HttpMethod.GET,
+            null,
+            path,
+            request
+        );
     }
 
     @PUT
     @Path("{path:.*}")
     public Uni<Response> put(
+        final String body,
+        @PathParam("path") final String path,
+        @Context final HttpServerRequest request
+    ) {
+        return execute(
+            HttpMethod.PUT,
+            body,
+            path,
+            request
+        );
+    }
+
+    @PATCH
+    @Path("{path:.*}")
+    public Uni<Response> patch(
+            final String body,
+            @PathParam("path") final String path,
+            @Context final HttpServerRequest request
+    ) {
+        return execute(
+            HttpMethod.PATCH,
+            body,
+            path,
+            request
+        );
+    }
+
+    @DELETE
+    @Path("{path:.*}")
+    public Uni<Response> delete(
+        @PathParam("path") final String path,
+        @Context final HttpServerRequest request
+    ) {
+        return execute(
+            HttpMethod.DELETE,
+            null,
+            path,
+            request
+        );
+    }
+
+    private Uni<Response> execute(
+        final String httpMethod,
         final String body,
         @PathParam("path") final String path,
         @Context final HttpServerRequest request
@@ -118,54 +142,6 @@ public class GatewayInputAdaptor {
             .token(tokenService.generateToken())
             .build();
         return gatewayUseCase
-            .put(destination, payload);
-    }
-
-    @PATCH
-    @Path("{path:.*}")
-    public Uni<Response> patch(
-            final String body,
-            @PathParam("path") final String path,
-            @Context final HttpServerRequest request
-    ) {
-        if(authService.unAuthorized()) {
-            return UNAUTHORIZED;
-        }
-        final Destination destination = DestinationBuilder
-                .buildDestination(
-                        apiRoot,
-                        path,
-                        request.query()
-                );
-        final Payload payload = Payload
-                .builder()
-                .body(body)
-                .token(tokenService.generateToken())
-                .build();
-        return gatewayUseCase
-                .patch(destination, payload);
-    }
-
-    @DELETE
-    @Path("{path:.*}")
-    public Uni<Response> delete(
-        @PathParam("path") final String path,
-        @Context final HttpServerRequest request
-    ) {
-        if(authService.unAuthorized()) {
-            return UNAUTHORIZED;
-        }
-        final Destination destination = DestinationBuilder
-            .buildDestination(
-                apiRoot,
-                path,
-                request.query()
-            );
-        final Payload payload = Payload
-            .builder()
-            .token(tokenService.generateToken())
-            .build();
-        return gatewayUseCase
-            .delete(destination, payload);
+            .forward(httpMethod, destination, payload);
     }
 }

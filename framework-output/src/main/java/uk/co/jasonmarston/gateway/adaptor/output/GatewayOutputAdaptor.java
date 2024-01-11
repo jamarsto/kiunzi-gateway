@@ -51,50 +51,13 @@ public class GatewayOutputAdaptor implements GatewayOutputPort {
     }
 
     @Override
-    public Uni<Response> post(
+    public Uni<Response> forward(
+        final String stringHttpMethod,
         final Destination destination,
         final Payload payload
     ) {
-        return execute(HttpMethod.POST, destination, payload);
-    }
-
-    @Override
-    public Uni<Response> get(
-        final Destination destination,
-        final Payload payload
-    ) {
-        return execute(HttpMethod.GET, destination, payload);
-    }
-
-    @Override
-    public Uni<Response> put(
-        final Destination destination,
-        final Payload payload
-    ) {
-        return execute(HttpMethod.PUT, destination, payload);
-    }
-
-    @Override
-    public Uni<Response> patch(
-            final Destination destination,
-            final Payload payload
-    ) {
-        return execute(HttpMethod.PATCH, destination, payload);
-    }
-
-    @Override
-    public Uni<Response> delete(
-        final Destination destination,
-        final Payload payload
-    ) {
-        return execute(HttpMethod.DELETE, destination, payload);
-    }
-
-    private Uni<Response> execute(
-        final HttpMethod httpMethod,
-        final Destination destination,
-        final Payload payload
-    ) {
+        final HttpMethod httpMethod = HttpMethod
+            .valueOf(stringHttpMethod);
         return httpClient
             .request(
                 httpMethod,

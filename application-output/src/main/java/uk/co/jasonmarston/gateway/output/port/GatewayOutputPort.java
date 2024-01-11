@@ -6,23 +6,8 @@ import uk.co.jasonmarston.gateway.valueobject.Destination;
 import uk.co.jasonmarston.gateway.valueobject.Payload;
 
 public interface GatewayOutputPort {
-    Uni<Response> post(
-        final Destination destination,
-        final Payload payload
-    );
-    Uni<Response> get(
-        final Destination destination,
-        final Payload payload
-    );
-    Uni<Response> put(
-        final Destination destination,
-        final Payload payload
-    );
-    Uni<Response> patch(
-        final Destination destination,
-        final Payload payload
-    );
-    Uni<Response> delete(
+    Uni<Response> forward(
+        final String httpMethod,
         final Destination destination,
         final Payload payload
     );
