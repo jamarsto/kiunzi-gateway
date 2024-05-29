@@ -35,7 +35,7 @@ dependencies {
 
     implementation project(':application-input')
 
-    implementation 'io.quarkus:quarkus-resteasy-reactive-jackson';
+    implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
     implementation 'io.quarkus:quarkus-oidc'
     implementation 'io.quarkus:quarkus-oidc-client-reactive-filter'
 
@@ -54,4 +54,13 @@ java {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
 }

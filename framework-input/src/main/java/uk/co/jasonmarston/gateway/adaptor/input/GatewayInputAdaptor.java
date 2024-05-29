@@ -33,8 +33,8 @@ public class GatewayInputAdaptor {
             .build()
         );
 
-    @Inject
-    private AuthService authService;
+//    @Inject
+//    private AuthService authService;
 
     @Inject
     private TokenService tokenService;
@@ -127,9 +127,9 @@ public class GatewayInputAdaptor {
         @PathParam("path") final String path,
         @Context final HttpServerRequest request
     ) {
-        if(authService.unAuthorized()) {
-            return UNAUTHORIZED;
-        }
+//        if(authService.unAuthorized()) {
+//            return UNAUTHORIZED;
+//        }
         final Destination destination = DestinationBuilder
             .buildDestination(
                 apiRoot,

@@ -30,12 +30,11 @@ public class SimpleAuthService implements AuthService {
     @Override
     public boolean unAuthorized() {
         if(isIntegrationGateway()) {
-            return jsonWebToken.getClaimNames() != null;
+            return jsonWebToken != null
+                && jsonWebToken.getClaimNames() != null;
         }
-        if(jsonWebToken == null) {
-            return true;
-        }
-        return tokenService.isNotAssignedRole(role);
+        return jsonWebToken == null
+            || tokenService.isNotAssignedRole(role);
     }
 
     private boolean isIntegrationGateway() {
